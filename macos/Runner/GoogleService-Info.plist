@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyC-vX1_SjOuv3HTEE_kWMr4Fz-_z2XTlik</string>
+	<key>GCM_SENDER_ID</key>
+	<string>91157257519</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.jogaJunto.RunnerTests</string>
+	<key>PROJECT_ID</key>
+	<string>jogajunto-17ee0</string>
+	<key>STORAGE_BUCKET</key>
+	<string>jogajunto-17ee0.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:91157257519:ios:0dbd2c92109f6bff01d5da</string>
+</dict>
+</plist>

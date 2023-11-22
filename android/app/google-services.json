@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "91157257519",
+    "project_id": "jogajunto-17ee0",
+    "storage_bucket": "jogajunto-17ee0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:91157257519:android:226a5e6148d4372c01d5da",
+        "android_client_info": {
+          "package_name": "com.example.joga_junto"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "91157257519-hn111u7gg935ovlup8nkvh5ptkud32tj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.joga_junto",
+            "certificate_hash": "78fbe4281886880f0f649a49925f9f0878dffb45"
+          }
+        },
+        {
+          "client_id": "91157257519-ts3ec8u74ocio5uflsstqqb5tuetocjc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_fdvglqfX9Y79FMsk4DRXbN0dB4rQy2Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "91157257519-ts3ec8u74ocio5uflsstqqb5tuetocjc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "91157257519-ehtangthqrtl77nefv34rn8ho968on4k.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.jogaJunto.RunnerTests"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
