@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:joga_junto/core/constants/components.dart';
+import 'package:joga_junto/core/common/signin_google_button.dart';
+import 'package:joga_junto/theme/pallete.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:joga_junto/core/common/home_screen.dart';
 
@@ -24,7 +25,6 @@ class _LoginScreenState extends State<LoginScreen> {
         return false;
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
         body: LoadingOverlay(
           isLoading: _saving,
           child: SafeArea(
@@ -32,86 +32,67 @@ class _LoginScreenState extends State<LoginScreen> {
               padding: const EdgeInsets.all(20.0),
               child: Column(
                 children: [
-                  const TopScreenImage(screenImageName: 'welcome.png'),
                   Expanded(
                     flex: 2,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const ScreenTitle(title: 'Login'),
-                        CustomTextField(
-                          textField: TextField(
-                              onChanged: (value) {
-                                _email = value;
-                              },
-                              style: const TextStyle(
-                                fontSize: 20,
-                              ),),
+                      children: [const Text('Cadastro',
+                        style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
                         ),
-                        CustomTextField(
-                          textField: TextField(
-                            obscureText: true,
-                            onChanged: (value) {
-                              _password = value;
-                            },
-                            style: const TextStyle(
-                              fontSize: 20,
-                            ),),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 30,
                         ),
-                        /* CustomBottomScreen(
-                          textButton: 'Login',
-                          heroTag: 'login_btn',
-                          question: 'Forgot password?',
-                          buttonPressed: () async {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                            setState(() {
-                              _saving = true;
-                            });
-                            try {
-                              await _auth.signInWithEmailAndPassword(
-                                  email: _email, password: _password);
-
-                              if (context.mounted) {
-                                setState(() {
-                                  _saving = false;
-                                  Navigator.popAndPushNamed(
-                                      context, LoginScreen.id);
-                                });
-                                //Navigator.pushNamed(context, WelcomeScreen.id);
-                              }
-                            } catch (e) {
-                              signUpAlert(
-                                context: context,
-                                onPressed: () {
-                                  setState(() {
-                                    _saving = false;
-                                  });
-                                  Navigator.popAndPushNamed(
-                                      context, LoginScreen.id);
-                                },
-                                title: 'WRONG PASSWORD OR EMAIL',
-                                desc:
-                                    'Confirm your email and password and try again',
-                                btnText: 'Try Now',
-                              ).show();
-                            }
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(40),
+                          border: Border.all(
+                            width: 2.5,
+                            color: Pallete.orangeColor,
+                          ),
+                        ),
+                        child: TextField(
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: const InputDecoration(
+                            hintText: 'E-mail'
+                          ),
+                          onChanged: (value) {
+                            _email = value;
                           },
-                          questionPressed: () {
-                            signUpAlert(
-                              onPressed: () async {
-                                await FirebaseAuth.instance
-                                    .sendPasswordResetEmail(email: _email);
-                              },
-                              title: 'RESET YOUR PASSWORD',
-                              desc:
-                                  'Click on the button to reset your password',
-                              btnText: 'Reset Now',
-                              context: context,
-                            ).show();
+                          style: const TextStyle(
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 30,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(40),
+                          border: Border.all(
+                            width: 2.5,
+                            color: Pallete.orangeColor,
+                          ),
+                        ),
+                        child: TextField(
+                          decoration: const InputDecoration(
+                            hintText: 'Senha'
+                          ),
+                          obscureText: true,
+                          onChanged: (value) {
+                            _password = value;
                           },
-                        ), */
-                      ],
+                          style: const TextStyle(
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                      const SignInGoogle(),
+                    ],
                     ),
                   ),
                 ],

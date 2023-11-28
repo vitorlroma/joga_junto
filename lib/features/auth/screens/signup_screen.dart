@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:joga_junto/core/constants/components.dart';
 import 'package:joga_junto/core/common/home_screen.dart';
 import 'package:joga_junto/features/auth/screens/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 
 class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+  const SignUpScreen({Key? key}) : super(key: key);
   static String id = 'signup_screen';
 
   @override
@@ -28,7 +27,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
         return true;
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
         body: LoadingOverlay(
           isLoading: _saving,
           child: SafeArea(
@@ -37,7 +35,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const TopScreenImage(screenImageName: 'signup.png'),
                   Expanded(
                     flex: 2,
                     child: Padding(
@@ -48,92 +45,63 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const ScreenTitle(title: 'Sign Up'),
-                          CustomTextField(
-                            textField: TextField(
-                              onChanged: (value) {
-                                _email = value;
-                              },
-                              style: const TextStyle(
-                                fontSize: 20,
-                              ),),
+                          const Text(
+                            'Cadastro',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                          CustomTextField(
-                            textField: TextField(
-                              obscureText: true,
-                              onChanged: (value) {
-                                _password = value;
-                              },
-                              style: const TextStyle(
-                                fontSize: 20,
-                              ),),
+                          TextField(
+                            decoration: const InputDecoration(
+                              hintText: 'E-mail'
+                            ),
+                            onChanged: (value) {
+                              _email = value;
+                            },
+                            style: const TextStyle(
+                              fontSize: 20,
+                            ),
                           ),
-                          CustomTextField(
-                            textField: TextField(
-                              obscureText: true,
-                              onChanged: (value) {
-                                _confirmPass = value;
-                              },
-                              style: const TextStyle(
-                                fontSize: 20,
-                              ),),
+                          TextField(
+                            decoration: const InputDecoration(
+                              hintText: 'Senha'
+                            ),
+                            obscureText: true,
+                            onChanged: (value) {
+                              _password = value;
+                            },
+                            style: const TextStyle(
+                              fontSize: 20,
+                            ),
                           ),
-                          /* CustomBottomScreen(
-                            textButton: 'Sign Up',
-                            heroTag: 'signup_btn',
-                            question: 'Have an account?',
-                            buttonPressed: () async {
+                          ElevatedButton(
+                            onPressed: () async {
                               FocusManager.instance.primaryFocus?.unfocus();
                               setState(() {
                                 _saving = true;
                               });
                               if (_confirmPass == _password) {
                                 try {
-                                  await _auth.createUserWithEmailAndPassword(
-                                      email: _email, password: _password);
+                                  await FirebaseAuth.instance
+                                      .createUserWithEmailAndPassword(
+                                          email: _email, password: _password);
 
                                   if (context.mounted) {
-                                    signUpAlert(
-                                      context: context,
-                                      title: 'GOOD JOB',
-                                      desc: 'Go login now',
-                                      btnText: 'Login Now',
-                                      onPressed: () {
-                                        setState(() {
-                                          _saving = false;
-                                          Navigator.popAndPushNamed(
-                                              context, SignUpScreen.id);
-                                        });
-                                        Navigator.pushNamed(
-                                            context, LoginScreen.id);
-                                      },
-                                    ).show();
+                                    
                                   }
-                                } catch (e) {
-                                  signUpAlert(
-                                      context: context,
-                                      onPressed: () {
-                                        SystemNavigator.pop();
-                                      },
-                                      title: 'SOMETHING WRONG',
-                                      desc: 'Close the app and try again',
-                                      btnText: 'Close Now');
-                                }
-                              } else {
-                                showAlert(
-                                    context: context,
-                                    title: 'WRONG PASSWORD',
-                                    desc:
-                                        'Make sure that you write the same password twice',
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    }).show();
+                                } catch (e) {}
+
                               }
                             },
-                            questionPressed: () async {
+                            child: const Text('Sign Up'),
+                          ),
+                          TextButton(
+                            onPressed: () async {
                               Navigator.pushNamed(context, LoginScreen.id);
                             },
-                          ), */
+                            child: const Text('Have an account?'),
+                          ),
                         ],
                       ),
                     ),
