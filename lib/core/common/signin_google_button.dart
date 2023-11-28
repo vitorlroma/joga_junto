@@ -17,10 +17,12 @@ class SignInGoogle extends ConsumerWidget{
       padding: const EdgeInsets.all(18.0),  
       child: ElevatedButton.icon(
         onPressed: () => signInWithGoogle(context, ref),
-        icon: Image.asset(
-          Constants.googleLogoPath,
-          width: 35,
-          ),
+        icon: Flexible(
+          child: Image.asset(
+            Constants.googleLogoPath,
+            width: 35,
+            ),
+        ),
         label: const Text('Continue with Google',
           style: TextStyle(fontSize: 18),
           ),
