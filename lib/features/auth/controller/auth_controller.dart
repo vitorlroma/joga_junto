@@ -22,18 +22,18 @@ class AuthController {
     user.fold((l) => showSnackBar(context, l.message), (r) => null);
   }
 
-  void signUp({
-      required BuildContext context,
-      required String profilePic,
-      required String name,
-      required String email,
-      required String password,
-      required String cpf,
-      required List<String> address,
-      required String cityState,
-      required String statistics,
-      required int karma
-    }) async {
+  void signUp(
+      BuildContext context,
+      String profilePic,
+      String name,
+      String email,
+      String password,
+      String cpf,
+      List<String> address,
+      String cityState,
+      String statistics,
+      int karma
+    ) async {
     final user = await _authRepository.signUpUser(
       profilePic: profilePic, 
       name: name, 
