@@ -1,22 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:joga_junto/core/common/signin_google_button.dart';
+import 'package:joga_junto/features/auth/controller/auth_controller.dart';
+import 'package:joga_junto/features/auth/screens/signup_screen.dart';
 import 'package:joga_junto/theme/pallete.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
   static String id = 'login_screen';
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  final formKey = GlobalKey<FormState>();
-  final email = TextEditingController();
-  final senha = TextEditingController();
+class _LoginScreenState extends ConsumerState<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _email = TextEditingController();
+  final _password = TextEditingController();
   // ignore: prefer_final_fields
   bool _saving = false;
+
+  void signInWithEmailAndPassword(BuildContext context){
+    ref.read(authControllerProvider).signIn(context, _email.text, _password.text);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,46 +32,53 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(backgroundColor: Pallete.orangeColor,),
       body: LoadingOverlay(
         isLoading: _saving,
-        child: SafeArea(
+        child: SingleChildScrollView(
           child: Padding(
-          padding: const EdgeInsets.only(top: 100),
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 25),
             child: Form(
-              key: formKey,
+              key: _formKey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [ 
                   const Text(
-                    'titulo',
+                    'JogaJunto',
                     style: TextStyle(
+                      color: Pallete.orangeColor,
                       fontSize: 35,
                       fontWeight: FontWeight.bold,
                       letterSpacing: -1.5,
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(24),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 24),
                     child: TextFormField(
-                      controller: email,
-                      decoration:const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Email',
+                      controller: _email,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: const BorderSide(),
+                        ),
+                        labelText: 'E-mail',
                       ),
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
                         if (value!.isEmpty) {
-                          return 'Informe o email corretamente!';
+                          return 'Informe o e-mail corretamente!';
                         }
                         return null;
                       },
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 24),
                     child: TextFormField(
-                      controller: senha,
+                      controller: _password,
                       obscureText: true,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: const BorderSide(),
+                        ),
                         labelText: 'Senha',
                       ),
                       validator: (value) {
@@ -77,44 +92,42 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(24.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                     child: ElevatedButton(
                       onPressed: () {
-                        if (formKey.currentState!.validate()) {
-
+                        if (_formKey.currentState!.validate()) {
+                          signInWithEmailAndPassword(context);
                         }
                       },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: (_saving)
-                            ? [
-                                const Padding(
-                                  padding: EdgeInsets.all(16),
-                                  child: SizedBox(
-                                    width: 24,
-                                    height: 24,
-                                    child: CircularProgressIndicator(
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                )
-                              ]
-                            : [
-                                const Padding(
-                                  padding: EdgeInsets.all(16.0),
-                                  child: Text(
-                                    'actionButton',
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                ),
-                              ],
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Pallete.orangeColor,
+                        minimumSize: const Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)
+                        )
+                      ),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                        child: Text(
+                          'Login',
+                          style: TextStyle(fontSize: 18),
+                        ),
                       ),
                     ),
                   ),
                   const SignInGoogle(),
-                  TextButton(
-                    onPressed: () {},
-                    child: const Text('toggleButton'),
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.popAndPushNamed(context, SignUpScreen.id);
+                      },
+                      child: const Text('Não tem conta? Cadastre-se aqui!',
+                        style: TextStyle(
+                          fontSize: 18
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
