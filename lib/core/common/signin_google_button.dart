@@ -14,7 +14,7 @@ class SignInGoogle extends ConsumerWidget{
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
-      padding: const EdgeInsets.all(18.0),  
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),  
       child: ElevatedButton.icon(
         onPressed: () => signInWithGoogle(context, ref),
         icon: Flexible(
@@ -27,7 +27,7 @@ class SignInGoogle extends ConsumerWidget{
           style: TextStyle(fontSize: 18),
           ),
         style: ElevatedButton.styleFrom(
-          backgroundColor: Pallete.greyColor,
+          backgroundColor: Pallete.orangeColor,
           minimumSize: const Size(double.infinity, 50),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20)

@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       
       debugShowCheckedModeBanner: false,
-      theme: Pallete.lightModeAppTheme,
+      theme: Pallete.darkModeAppTheme,
       initialRoute: LoginScreen.id,
       routes: {
         LoginScreen.id: (context) => const LoginScreen(),
