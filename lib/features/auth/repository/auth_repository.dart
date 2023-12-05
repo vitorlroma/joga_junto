@@ -32,6 +32,8 @@ class AuthRepository {
 
     CollectionReference get _users => _firestore.collection(FirebaseConstants.usersCollection);
 
+    Stream<User?> get authStateChange => _auth.authStateChanges();
+
     FutureEither<UserModel> signInWithGoogle() async{
       try{
         final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
@@ -44,7 +46,7 @@ class AuthRepository {
 
         UserCredential userCredential = await _auth.signInWithCredential(credential);
         
-        late UserModel userModel;
+        UserModel userModel;
 
         if(userCredential.additionalUserInfo!.isNewUser){
           userModel = UserModel(
@@ -60,57 +62,8 @@ class AuthRepository {
             karma: 0,
           );
           await _users.doc(userCredential.user!.uid).set(userModel.toMap());
-        }
-        return right(userModel);
-      } on FirebaseException catch(e){
-        throw e.message!;
-      } catch (e){
-        return left(Failure(e.toString()));
-      }
-    }
-
-    FutureEither<UserModel> signUpUser({
-      required String profilePic,
-      required String name,
-      required String email,
-      required String password,
-      required String cpf,
-      required List<String> address,
-      required String cityState,
-      required String statistics,
-      required int karma,
-      required Uint8List file,
-    }) async {
-      try {
-        late UserModel userModel;
-        
-        if (email.isNotEmpty ||
-            password.isNotEmpty ||
-            name.isNotEmpty ||
-            cpf.isEmpty ||
-            address.isEmpty ||
-            cityState.isEmpty ||
-            statistics.isEmpty ||
-            karma.isNaN
-            ) {
-          UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-            email: email,
-            password: password,
-          );
-
-          userModel = UserModel(
-            uid: userCredential.user!.uid, 
-            profilePic: profilePic,
-            name: name,
-            email: userCredential.user!.email??'',
-            password: password,
-            cpf: cpf,
-            address: [],
-            cityState: cityState,
-            statistics: statistics,
-            karma: 0,
-          );
-          await _users.doc(userCredential.user!.uid).set(userModel.toMap());
+        } else {
+          userModel = await getUserData(userCredential.user!.uid).first;
         }
         return right(userModel);
       } on FirebaseException catch(e){
@@ -128,11 +81,11 @@ class AuthRepository {
         late UserModel userModel;
 
         if (email.isNotEmpty || password.isNotEmpty) {
-          final credential = await _auth.signInWithEmailAndPassword(
+          final userCredential = await _auth.signInWithEmailAndPassword(
             email: email, 
             password: password
           );
-          userModel = credential.user as UserModel;
+          userModel = await getUserData(userCredential.user!.uid).first;
         }
         return right(userModel);
       } on FirebaseException catch(e){
@@ -140,6 +93,55 @@ class AuthRepository {
       } catch (e){
         return left(Failure(e.toString()));
       }
+    }
+
+    FutureEither<UserModel> signUpUser({
+      required String profilePic,
+      required String name,
+      required String email,
+      required String password,
+      required String cpf,
+      required List<String> address,
+      required Uint8List file,
+    }) async {
+      try {
+        late UserModel userModel;
+        
+        if (email.isNotEmpty ||
+            password.isNotEmpty ||
+            name.isNotEmpty ||
+            cpf.isEmpty ||
+            address.isEmpty
+            ) {
+          UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+            email: email,
+            password: password,
+          );
+
+          userModel = UserModel(
+            uid: userCredential.user!.uid, 
+            profilePic: profilePic,
+            name: name,
+            email: userCredential.user!.email??'',
+            password: password,
+            cpf: cpf,
+            address: [],
+            cityState: '',
+            statistics: '',
+            karma: 0,
+          );
+          await _users.doc(userCredential.user!.uid).set(userModel.toMap());
+        }
+        return right(userModel);
+      } on FirebaseException catch(e){
+        throw e.message!;
+      } catch (e){
+        return left(Failure(e.toString()));
+      }
+    }
+
+    Stream<UserModel> getUserData(String uid){
+      return _users.doc(uid).snapshots().map((event) => UserModel.fromMap(event.data() as Map<String, dynamic>));
     }
 
     Future<void> signOut() async {
