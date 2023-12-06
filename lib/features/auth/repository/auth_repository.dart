@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -50,16 +49,9 @@ class AuthRepository {
 
         if(userCredential.additionalUserInfo!.isNewUser){
           userModel = UserModel(
-            uid: userCredential.user!.uid,
-            profilePic: userCredential.user!.photoURL??Constants.avatarDefault,
-            name: userCredential.user!.displayName??'No name',
+            profilePic: userCredential.user!.photoURL ?? Constants.avatarDefault,
             email: userCredential.user!.email??'',
             password: credential.accessToken??'',
-            cpf: '',
-            address: [],
-            cityState: '',
-            statistics: '',
-            karma: 0,
           );
           await _users.doc(userCredential.user!.uid).set(userModel.toMap());
         } else {
@@ -96,22 +88,14 @@ class AuthRepository {
     }
 
     FutureEither<UserModel> signUpUser({
-      required String profilePic,
-      required String name,
       required String email,
       required String password,
-      required String cpf,
-      required List<String> address,
-      required Uint8List file,
     }) async {
       try {
         late UserModel userModel;
         
         if (email.isNotEmpty ||
-            password.isNotEmpty ||
-            name.isNotEmpty ||
-            cpf.isEmpty ||
-            address.isEmpty
+            password.isNotEmpty
             ) {
           UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
             email: email,
@@ -119,16 +103,9 @@ class AuthRepository {
           );
 
           userModel = UserModel(
-            uid: userCredential.user!.uid, 
-            profilePic: profilePic,
-            name: name,
+            profilePic: userCredential.user!.photoURL ?? Constants.avatarDefault,
             email: userCredential.user!.email??'',
             password: password,
-            cpf: cpf,
-            address: [],
-            cityState: '',
-            statistics: '',
-            karma: 0,
           );
           await _users.doc(userCredential.user!.uid).set(userModel.toMap());
         }
@@ -144,7 +121,8 @@ class AuthRepository {
       return _users.doc(uid).snapshots().map((event) => UserModel.fromMap(event.data() as Map<String, dynamic>));
     }
 
-    Future<void> signOut() async {
-    await _auth.signOut();
-  }
+    void logOut() async {
+      await _googleSignIn.signOut();
+      await _auth.signOut();
+    }
 }

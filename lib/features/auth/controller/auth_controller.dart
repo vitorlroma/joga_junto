@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -41,7 +40,7 @@ class AuthController extends StateNotifier<bool>{
     state = true;
     final user = await _authRepository.signInWithGoogle();
     state = false;
-    user.fold((l) => showSnackBar(context, l.message), (r) => null);
+    user.fold((l) => showSnackBar(context, l.message), (userModel) => _ref.read(userProvider.notifier).update((state) => userModel));
   }
 
   void signIn(BuildContext context, String email, String password) async {
@@ -53,28 +52,23 @@ class AuthController extends StateNotifier<bool>{
 
   void signUp(
       BuildContext context,
-      String profilePic,
-      String name,
       String email,
       String password,
-      String cpf,
-      List<String> address,
     ) async {
       state = true;
     final user = await _authRepository.signUpUser(
-      profilePic: profilePic, 
-      name: name, 
       email: email, 
       password: password, 
-      cpf: cpf, 
-      address: address,
-      file: Uint8List(0),
       );
       state = false;
-    user.fold((l) => showSnackBar(context, l.message), (r) => null);
+    user.fold((l) => showSnackBar(context, l.message), (userModel) => _ref.read(userProvider.notifier).update((state) => userModel));
   }
 
   Stream<UserModel> getUserData(String uid){
     return _authRepository.getUserData(uid);
+  }
+
+  void logOut() async {
+    _authRepository.logOut();
   }
 }
