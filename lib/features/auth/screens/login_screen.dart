@@ -1,122 +1,158 @@
 import 'package:flutter/material.dart';
-import 'package:joga_junto/core/constants/components.dart';
-import 'package:loading_overlay/loading_overlay.dart';
-import 'package:joga_junto/core/common/home_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:joga_junto/core/common/common_style.dart';
+import 'package:joga_junto/core/common/loader.dart';
+import 'package:joga_junto/core/constants/constants.dart';
+import 'package:joga_junto/features/auth/controller/auth_controller.dart';
+import 'package:joga_junto/theme/pallete.dart';
+import 'package:routemaster/routemaster.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
-  static String id = 'login_screen';
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  late String _email;
-  late String _password;
-  bool _saving = false;
+class _LoginScreenState extends ConsumerState<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _email = TextEditingController();
+  final _password = TextEditingController();
+
+  @override
+  void dispose() {
+    super.dispose();
+    _email.dispose();
+    _password.dispose();
+  }
+
+  void signInWithEmailAndPassword(BuildContext context){
+    ref.read(authControllerProvider.notifier).signIn(context, _email.text, _password.text);
+  }
+
+  void signInWithGoogle(BuildContext context, WidgetRef ref) {
+    ref.read(authControllerProvider.notifier).signInWithGoogle(context);
+  }
+
+  void navigateToSignUpScreen(BuildContext context) {
+    Routemaster.of(context).push('/sign-up');
+  }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        Navigator.popAndPushNamed(context, HomeScreen.id);
-        return false;
-      },
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: LoadingOverlay(
-          isLoading: _saving,
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                children: [
-                  const TopScreenImage(screenImageName: 'welcome.png'),
-                  Expanded(
-                    flex: 2,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const ScreenTitle(title: 'Login'),
-                        CustomTextField(
-                          textField: TextField(
-                              onChanged: (value) {
-                                _email = value;
-                              },
-                              style: const TextStyle(
-                                fontSize: 20,
-                              ),),
+    final isLoading = ref.watch(authControllerProvider);
+    return Scaffold(
+      appBar: AppBar(backgroundColor: Pallete.orangeColor,),
+      body: isLoading
+        ? const Loader() 
+        : SingleChildScrollView(
+        child: Padding(
+        padding: bodyPading,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [ 
+              const Text(
+                'JogaJunto',
+                style: TextStyle(
+                  color: Pallete.orangeColor,
+                  fontSize: 35,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: -1.5,
+                ),
+              ),
+              Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: formFieldPadding,
+                      child: TextFormField(
+                        controller: _email,
+                        decoration: CommonStyle.textFieldStyle(
+                          labelText:'E-mail', 
+                          hintText: 'Insira o e-mail'
                         ),
-                        CustomTextField(
-                          textField: TextField(
-                            obscureText: true,
-                            onChanged: (value) {
-                              _password = value;
-                            },
-                            style: const TextStyle(
-                              fontSize: 20,
-                            ),),
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Informe o e-mail corretamente!';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: formFieldPadding,
+                      child: TextFormField(
+                        controller: _password,
+                        obscureText: true,
+                        decoration: CommonStyle.textFieldStyle(
+                          labelText:'Senha', 
+                          hintText: 'Insira sua senha'
                         ),
-                        /* CustomBottomScreen(
-                          textButton: 'Login',
-                          heroTag: 'login_btn',
-                          question: 'Forgot password?',
-                          buttonPressed: () async {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                            setState(() {
-                              _saving = true;
-                            });
-                            try {
-                              await _auth.signInWithEmailAndPassword(
-                                  email: _email, password: _password);
-
-                              if (context.mounted) {
-                                setState(() {
-                                  _saving = false;
-                                  Navigator.popAndPushNamed(
-                                      context, LoginScreen.id);
-                                });
-                                //Navigator.pushNamed(context, WelcomeScreen.id);
-                              }
-                            } catch (e) {
-                              signUpAlert(
-                                context: context,
-                                onPressed: () {
-                                  setState(() {
-                                    _saving = false;
-                                  });
-                                  Navigator.popAndPushNamed(
-                                      context, LoginScreen.id);
-                                },
-                                title: 'WRONG PASSWORD OR EMAIL',
-                                desc:
-                                    'Confirm your email and password and try again',
-                                btnText: 'Try Now',
-                              ).show();
-                            }
-                          },
-                          questionPressed: () {
-                            signUpAlert(
-                              onPressed: () async {
-                                await FirebaseAuth.instance
-                                    .sendPasswordResetEmail(email: _email);
-                              },
-                              title: 'RESET YOUR PASSWORD',
-                              desc:
-                                  'Click on the button to reset your password',
-                              btnText: 'Reset Now',
-                              context: context,
-                            ).show();
-                          },
-                        ), */
-                      ],
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Informa sua senha!';
+                          } else if (value.length < 6) {
+                            return 'Sua senha deve ter no mínimo 6 caracteres';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: buttonPadding,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            signInWithEmailAndPassword(context);
+                          }
+                        },
+                        style: CommonStyle.buttonStyle(),
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                          child: Text(
+                            'Login',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              ),
+              Padding(
+                padding: buttonPadding,  
+                child: ElevatedButton.icon(
+                  onPressed: () => signInWithGoogle(context, ref),
+                  style: CommonStyle.buttonStyle(),
+                  icon: CircleAvatar(
+                    child: Image.asset(
+                      Constants.googleLogoPath,
+                      width: 35,
                     ),
                   ),
-                ],
+                  label: const Text('Continue with Google',
+                    style: TextStyle(fontSize: 18),
+                    ),
+                ),
               ),
-            ),
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: TextButton(
+                  onPressed: () {
+                    navigateToSignUpScreen(context);
+                  },
+                  child: const Text('Não tem conta? Cadastre-se aqui!',
+                    style: TextStyle(
+                      fontSize: 18
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

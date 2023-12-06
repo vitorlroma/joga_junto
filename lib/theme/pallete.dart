@@ -15,12 +15,13 @@ class Pallete {
     cardColor: greyColor,
     appBarTheme: const AppBarTheme(
       backgroundColor: orangeColor,
+      elevation: 5,
       iconTheme: IconThemeData(
         color: whiteColor,
       ),
     ),
     drawerTheme: const DrawerThemeData(
-      backgroundColor: whiteColor,
+      backgroundColor: greyColor,
     ),
     primaryColor: orangeColor,
   );
@@ -30,7 +31,7 @@ class Pallete {
     cardColor: greyColor,
     appBarTheme: const AppBarTheme(
       backgroundColor: orangeColor,
-      elevation: 0,
+      elevation: 5,
       iconTheme: IconThemeData(
         color: blackColor,
       ),

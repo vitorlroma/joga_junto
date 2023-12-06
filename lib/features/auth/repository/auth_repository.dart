@@ -31,6 +31,8 @@ class AuthRepository {
 
     CollectionReference get _users => _firestore.collection(FirebaseConstants.usersCollection);
 
+    Stream<User?> get authStateChange => _auth.authStateChanges();
+
     FutureEither<UserModel> signInWithGoogle() async{
       try{
         final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
@@ -43,16 +45,67 @@ class AuthRepository {
 
         UserCredential userCredential = await _auth.signInWithCredential(credential);
         
-        late UserModel userModel;
+        UserModel userModel;
 
         if(userCredential.additionalUserInfo!.isNewUser){
           userModel = UserModel(
-            name: userCredential.user!.displayName??'No name',
-            profilePic: userCredential.user!.photoURL??Constants.avatarDefault,
-            banner: Constants.bannerDefault,
-            uid: userCredential.user!.uid,
-            isAuthentication: true, karma: 0,
-            awards: []
+            profilePic: userCredential.user!.photoURL ?? Constants.avatarDefault,
+            email: userCredential.user!.email??'',
+            password: credential.accessToken??'',
+          );
+          await _users.doc(userCredential.user!.uid).set(userModel.toMap());
+        } else {
+          userModel = await getUserData(userCredential.user!.uid).first;
+        }
+        return right(userModel);
+      } on FirebaseException catch(e){
+        throw e.message!;
+      } catch (e){
+        return left(Failure(e.toString()));
+      }
+    }
+
+    FutureEither<UserModel> signInUser({
+      required String email,
+      required String password,
+    }) async {
+      try{
+        late UserModel userModel;
+
+        if (email.isNotEmpty || password.isNotEmpty) {
+          final userCredential = await _auth.signInWithEmailAndPassword(
+            email: email, 
+            password: password
+          );
+          userModel = await getUserData(userCredential.user!.uid).first;
+        }
+        return right(userModel);
+      } on FirebaseException catch(e){
+        throw e.message!;
+      } catch (e){
+        return left(Failure(e.toString()));
+      }
+    }
+
+    FutureEither<UserModel> signUpUser({
+      required String email,
+      required String password,
+    }) async {
+      try {
+        late UserModel userModel;
+        
+        if (email.isNotEmpty ||
+            password.isNotEmpty
+            ) {
+          UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+            email: email,
+            password: password,
+          );
+
+          userModel = UserModel(
+            profilePic: userCredential.user!.photoURL ?? Constants.avatarDefault,
+            email: userCredential.user!.email??'',
+            password: password,
           );
           await _users.doc(userCredential.user!.uid).set(userModel.toMap());
         }
@@ -62,5 +115,14 @@ class AuthRepository {
       } catch (e){
         return left(Failure(e.toString()));
       }
+    }
+
+    Stream<UserModel> getUserData(String uid){
+      return _users.doc(uid).snapshots().map((event) => UserModel.fromMap(event.data() as Map<String, dynamic>));
+    }
+
+    void logOut() async {
+      await _googleSignIn.signOut();
+      await _auth.signOut();
     }
 }
