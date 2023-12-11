@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:joga_junto/features/auth/controller/auth_controller.dart';
 import 'package:joga_junto/features/home/drawers/profile_drawer.dart';
 import 'package:joga_junto/features/home/drawers/team_list_drawer.dart';
+import 'package:joga_junto/features/statistics/screens/statistics_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -44,6 +45,7 @@ class HomeScreen extends ConsumerWidget {
           )
         ],
       ),
+      body: const StatisticsScreen(),
       drawer: const TeamListDrawer(),
       endDrawer: const ProfileDrawer()  ,
     );
