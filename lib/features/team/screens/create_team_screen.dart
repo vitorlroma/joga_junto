@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:joga_junto/core/common/common_style.dart';
+import 'package:joga_junto/core/common/loader.dart';
+import 'package:joga_junto/features/team/controller/team_controller.dart';
 
 class CreateTeamScreen extends ConsumerStatefulWidget {
   const CreateTeamScreen({super.key});
@@ -19,13 +21,20 @@ class _CreateTeamScreenState extends ConsumerState<CreateTeamScreen> {
     _name.dispose();
   }
 
+  void createTeam(){
+    ref.read(teamControllerProvider.notifier).createTeam(_name.text, context);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref.watch(teamControllerProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Criar equipe!'),
       ),
-      body: Padding(
+      body: isLoading
+      ? const Loader() 
+      : Padding(
         padding: bodyPading,
         child: Form(
           key: _formKey,
@@ -55,6 +64,7 @@ class _CreateTeamScreenState extends ConsumerState<CreateTeamScreen> {
                 child: ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
+                      createTeam();
                     }
                   },
                   style: CommonStyle.buttonStyle(),
