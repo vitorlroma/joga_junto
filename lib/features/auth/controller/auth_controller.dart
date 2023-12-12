@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:joga_junto/core/utils.dart';
 import 'package:joga_junto/features/auth/repository/auth_repository.dart';
+import 'package:joga_junto/features/statistics/controller/statistics_controller.dart';
 import 'package:joga_junto/models/user_model.dart';
 
 
@@ -10,6 +11,7 @@ final userProvider = StateProvider<UserModel?>((ref) => null);
 final authControllerProvider = StateNotifierProvider<AuthController, bool>(
   (ref) => AuthController(
     authRepository: ref.watch(authRepositoryProvider),
+    statisticsController: ref.watch(statisticsControllerProvider.notifier),
     ref: ref,
   )
 );
@@ -26,11 +28,14 @@ final getUserDataProvider = StreamProvider.family((ref, String uid) {
 
 class AuthController extends StateNotifier<bool>{
   final AuthRepository _authRepository;
+  final StatisticsController _statisticsController;
   final Ref _ref;
   AuthController({
     required AuthRepository authRepository,
+    required StatisticsController statisticsController,
     required Ref ref,
     }): _authRepository = authRepository, 
+      _statisticsController = statisticsController,
       _ref = ref,
       super(false);
 
@@ -38,7 +43,7 @@ class AuthController extends StateNotifier<bool>{
 
   void signInWithGoogle(BuildContext context) async {
     state = true;
-    final user = await _authRepository.signInWithGoogle();
+    final user = await _authRepository.signInWithGoogle(_statisticsController);
     state = false;
     user.fold((l) => showSnackBar(context, l.message), (userModel) => _ref.read(userProvider.notifier).update((state) => userModel));
   }
@@ -58,7 +63,8 @@ class AuthController extends StateNotifier<bool>{
       state = true;
     final user = await _authRepository.signUpUser(
       email: email, 
-      password: password, 
+      password: password,
+      statisticsController: _statisticsController
       );
       state = false;
     user.fold((l) => showSnackBar(context, l.message), (userModel) => _ref.read(userProvider.notifier).update((state) => userModel));
