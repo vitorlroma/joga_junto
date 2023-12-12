@@ -8,7 +8,7 @@ import 'package:joga_junto/core/constants/firebase_constants.dart';
 import 'package:joga_junto/core/failure.dart';
 import 'package:joga_junto/core/provider/firebase_provider.dart';
 import 'package:joga_junto/core/type_defs.dart';
-import 'package:joga_junto/features/statistics/repository/statistics_repository.dart';
+import 'package:joga_junto/features/statistics/controller/statistics_controller.dart';
 import 'package:joga_junto/models/user_model.dart';
 
 final authRepositoryProvider = Provider(
@@ -34,7 +34,7 @@ class AuthRepository {
 
     Stream<User?> get authStateChange => _auth.authStateChanges();
 
-    FutureEither<UserModel> signInWithGoogle(StatisticsRepository statisticsRepository) async{
+    FutureEither<UserModel> signInWithGoogle(StatisticsController statisticsController) async{
       try{
         final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
         final googleAuth = await googleUser?.authentication;
@@ -56,7 +56,7 @@ class AuthRepository {
             password: credential.accessToken??'',
           );
           await _users.doc(userCredential.user!.uid).set(userModel.toMap());
-          await statisticsRepository.createStatistics(userCredential.user!.uid);
+          statisticsController.createStatistics(userCredential.user!.uid);
         } else {
           userModel = await getUserData(userCredential.user!.uid).first;
         }
@@ -93,7 +93,7 @@ class AuthRepository {
     FutureEither<UserModel> signUpUser({
       required String email,
       required String password,
-      required StatisticsRepository statisticsRepository
+      required StatisticsController statisticsController
     }) async {
       try {
         late UserModel userModel;
@@ -113,7 +113,7 @@ class AuthRepository {
             password: password,
           );
           await _users.doc(userCredential.user!.uid).set(userModel.toMap());
-          await statisticsRepository.createStatistics(userCredential.user!.uid);
+          statisticsController.createStatistics(userCredential.user!.uid);
         }
         return right(userModel);
       } on FirebaseException catch(e){
