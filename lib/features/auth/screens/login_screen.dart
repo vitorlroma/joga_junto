@@ -48,7 +48,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ? const Loader() 
         : SingleChildScrollView(
         child: Padding(
-        padding: bodyPading,
+        padding: CommonStyle.bodyPading,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [ 
@@ -67,7 +67,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Padding(
-                      padding: formFieldPadding,
+                      padding: CommonStyle.formFieldPadding,
                       child: TextFormField(
                         controller: _email,
                         decoration: CommonStyle.textFieldStyle(
@@ -84,7 +84,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                     ),
                     Padding(
-                      padding: formFieldPadding,
+                      padding: CommonStyle.buttonPadding,
                       child: TextFormField(
                         controller: _password,
                         obscureText: true,
@@ -103,7 +103,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                     ),
                     Padding(
-                      padding: buttonPadding,
+                      padding: CommonStyle.buttonPadding,
                       child: ElevatedButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
@@ -124,7 +124,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 )
               ),
               Padding(
-                padding: buttonPadding,  
+                padding: CommonStyle.buttonPadding,  
                 child: ElevatedButton.icon(
                   onPressed: () => signInWithGoogle(context, ref),
                   style: CommonStyle.buttonStyle(),

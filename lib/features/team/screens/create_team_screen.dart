@@ -35,14 +35,14 @@ class _CreateTeamScreenState extends ConsumerState<CreateTeamScreen> {
       body: isLoading
       ? const Loader() 
       : Padding(
-        padding: bodyPading,
+        padding: CommonStyle.bodyPading,
         child: Form(
           key: _formKey,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
-                padding: formFieldPadding,
+                padding: CommonStyle.formFieldPadding,
                 child: TextFormField(
                   controller: _name,
                   decoration: CommonStyle.textFieldStyle(
@@ -60,7 +60,7 @@ class _CreateTeamScreenState extends ConsumerState<CreateTeamScreen> {
                 ),
               ),
               Padding(
-                padding: buttonPadding,
+                padding: CommonStyle.buttonPadding,
                 child: ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
