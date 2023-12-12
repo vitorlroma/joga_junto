@@ -3,10 +3,10 @@ import 'package:joga_junto/features/auth/controller/auth_controller.dart';
 import 'package:joga_junto/features/statistics/repository/statistics_repository.dart';
 import 'package:joga_junto/models/statistics_model.dart';
 
-final userStatisticsProvider = StreamProvider((ref) {
+final userStatisticsProvider = FutureProvider((ref) {
   final statisticsController = ref.watch(statisticsControllerProvider.notifier);
   return statisticsController.getUserStatistics();
-}); 
+});
 
 final statisticsControllerProvider = StateNotifierProvider<StatisticsController, bool>((ref) {
   final statisticsRepository = ref.watch(statisticsRepositoryProvider);
@@ -23,8 +23,14 @@ class StatisticsController extends StateNotifier<bool> {
   _ref = ref,
   super(false);
   
-  Stream<Statistics> getUserStatistics() {
+  void createStatistics (String uid) async {
+    state = true;
+    _statisticsRepository.createStatistics(uid);
+    state = false;
+  }
+
+  Future<Statistics> getUserStatistics() async {
     final uid = _ref.read(userProvider)!.uid;
-    return _statisticsRepository.getUserStatistics(uid);
+    return await _statisticsRepository.getStatistics(uid);
   }
 }

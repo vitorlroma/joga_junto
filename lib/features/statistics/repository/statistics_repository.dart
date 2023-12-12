@@ -19,7 +19,7 @@ class StatisticsRepository {
   
   FutureVoid createStatistics(String uid) async {
     try {
-      final statistics = Statistics(id: uid, score: 0);
+      final statistics = Statistics(id: uid, score: 0, assists: 0);
       return right(await _statistics.doc(uid).set(statistics.toMap()));
     } on FirebaseException catch (e) {
       throw e.message!;
@@ -28,11 +28,10 @@ class StatisticsRepository {
     } 
   }
 
-  Stream<Statistics> getUserStatistics(String uid) {
-    return _statistics.where('id', isEqualTo: uid).snapshots().map((event) {
-      Statistics statistic;
-      statistic = Statistics.fromMap(event.docs.first as Map<String, dynamic>);
-      return statistic;
+  Future<Statistics> getStatistics(String uid) async {
+    return _statistics.doc(uid).get().then((DocumentSnapshot doc) {
+      final data = Statistics.fromMap(doc.data() as Map<String, dynamic>);
+      return data;
     });
   }
 
