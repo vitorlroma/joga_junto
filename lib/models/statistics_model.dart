@@ -1,19 +1,22 @@
 class Statistics {
   final String id;
   final int score;
+  final int assists;
   Statistics({
     required this.id,
     required this.score,
+    required this.assists,
   });
-  
 
   Statistics copyWith({
     String? id,
     int? score,
+    int? assists,
   }) {
     return Statistics(
       id: id ?? this.id,
       score: score ?? this.score,
+      assists: assists ?? this.assists,
     );
   }
 
@@ -21,6 +24,7 @@ class Statistics {
     return {
       'id': id,
       'score': score,
+      'assists': assists,
     };
   }
 
@@ -28,11 +32,12 @@ class Statistics {
     return Statistics(
       id: map['id'] ?? '',
       score: map['score']?.toInt() ?? 0,
+      assists: map['assists']?.toInt() ?? 0,
     );
   }
 
   @override
-  String toString() => 'Statistics(id: $id, score: $score)';
+  String toString() => 'Statistics(id: $id, score: $score, assists: $assists)';
 
   @override
   bool operator ==(Object other) {
@@ -40,9 +45,10 @@ class Statistics {
   
     return other is Statistics &&
       other.id == id &&
-      other.score == score;
+      other.score == score &&
+      other.assists == assists;
   }
 
   @override
-  int get hashCode => id.hashCode ^ score.hashCode;
+  int get hashCode => id.hashCode ^ score.hashCode ^ assists.hashCode;
 }
