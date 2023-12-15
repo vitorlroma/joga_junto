@@ -1,11 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:joga_junto/features/auth/controller/auth_controller.dart';
 import 'package:joga_junto/features/statistics/repository/statistics_repository.dart';
 import 'package:joga_junto/models/statistics_model.dart';
 
-final userStatisticsProvider = FutureProvider((ref) {
+final statisticsProvider = FutureProvider.family((ref, String uid) {
   final statisticsController = ref.watch(statisticsControllerProvider.notifier);
-  return statisticsController.getUserStatistics();
+  return statisticsController.getStatistics(uid);
 });
 
 final statisticsControllerProvider = StateNotifierProvider<StatisticsController, bool>((ref) {
@@ -15,6 +14,7 @@ final statisticsControllerProvider = StateNotifierProvider<StatisticsController,
 
 class StatisticsController extends StateNotifier<bool> {
   final StatisticsRepository _statisticsRepository;
+  // ignore: unused_field
   final Ref _ref;
   StatisticsController({
     required statisticsRepository,
@@ -29,8 +29,7 @@ class StatisticsController extends StateNotifier<bool> {
     state = false;
   }
 
-  Future<Statistics> getUserStatistics() async {
-    final uid = _ref.read(userProvider)!.uid;
+  Future<Statistics> getStatistics(String uid) async {
     return await _statisticsRepository.getStatistics(uid);
   }
 }
