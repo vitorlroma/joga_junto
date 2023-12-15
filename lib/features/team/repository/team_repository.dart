@@ -6,6 +6,7 @@ import 'package:joga_junto/core/constants/firebase_constants.dart';
 import 'package:joga_junto/core/failure.dart';
 import 'package:joga_junto/core/provider/firebase_provider.dart';
 import 'package:joga_junto/core/type_defs.dart';
+import 'package:joga_junto/features/statistics/controller/statistics_controller.dart';
 import 'package:joga_junto/models/team_model.dart';
 
 final teamRepositoryProvider = Provider((ref) {
@@ -18,7 +19,7 @@ class TeamRepository {
     required FirebaseFirestore firestore
   }): _firestore = firestore;
 
-  FutureVoid createTeam(List<String> args) async {
+  FutureVoid createTeam(List<String> args, StatisticsController statisticsController) async {
     try {
       final teamRef = _teams.doc();
       final Team team = Team(
@@ -29,6 +30,7 @@ class TeamRepository {
         name: args[1], 
         members: [args[0]]
       );
+      statisticsController.createStatistics(team.id);
       return right(teamRef.set(team.toMap()));
     } on FirebaseException catch (e) {
       throw e.message!;
@@ -45,6 +47,10 @@ class TeamRepository {
       }
       return teams;
     });
+  }
+
+  Stream<Team> getTeamByUid(String uid){
+    return _teams.doc(uid).snapshots().map((event) => Team.fromMap(event.data() as Map<String, dynamic>));
   }
 
   CollectionReference get _teams => _firestore.collection(FirebaseConstants.teamsCollection);
