@@ -7,7 +7,11 @@ import 'package:joga_junto/models/statistics_model.dart';
 import 'package:joga_junto/theme/pallete.dart';
 
 class StatisticsScreen extends ConsumerWidget {
-  const StatisticsScreen({super.key});
+  final String _statisticsUid;
+  const StatisticsScreen({
+    super.key, 
+    required String statisticsUid
+    }): _statisticsUid = statisticsUid;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -16,7 +20,7 @@ class StatisticsScreen extends ConsumerWidget {
       child: SizedBox(
         height: 150,
         width: double.infinity,
-        child: ref.watch(userStatisticsProvider).when(
+        child: ref.read(statisticsProvider(_statisticsUid)).when(
           data: (statistics) => Builder(
             builder: (BuildContext context) {
               final statistic = _getAttributes(statistics);
@@ -27,7 +31,7 @@ class StatisticsScreen extends ConsumerWidget {
                     height: 50,
                     decoration: const BoxDecoration(
                       color: Pallete.orangeColor,
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
                       border: Border.symmetric(
                         vertical: BorderSide(
                           color: Pallete.orangeColor,
@@ -74,7 +78,7 @@ class StatisticsScreen extends ConsumerWidget {
         width: 184.2,
         height: 60,
         decoration:const BoxDecoration(
-          borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20)),
+          borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10)),
           border: Border.symmetric(
             vertical: BorderSide(
               color: Pallete.orangeColor,
@@ -90,7 +94,7 @@ class StatisticsScreen extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             const Padding(
-              padding: EdgeInsets.all(4),
+              padding: EdgeInsets.only(top: 10, bottom: 5),
               child: Text('Pontos marcados:',
                 style: TextStyle(
                   fontSize: 12
@@ -112,7 +116,7 @@ class StatisticsScreen extends ConsumerWidget {
         width: 184.3,
         height: 60,
         decoration:const BoxDecoration(
-          borderRadius: BorderRadius.only(bottomRight: Radius.circular(20)),
+          borderRadius: BorderRadius.only(bottomRight: Radius.circular(10)),
           border: Border.symmetric(
             vertical: BorderSide(
               color: Pallete.orangeColor,

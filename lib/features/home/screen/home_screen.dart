@@ -45,7 +45,7 @@ class HomeScreen extends ConsumerWidget {
           )
         ],
       ),
-      body: const StatisticsScreen(),
+      body: StatisticsScreen(statisticsUid: user.uid,),
       drawer: const TeamListDrawer(),
       endDrawer: const ProfileDrawer()  ,
     );
