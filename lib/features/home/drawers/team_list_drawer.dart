@@ -13,6 +13,10 @@ class TeamListDrawer extends ConsumerWidget {
     Routemaster.of(context).push('/create-team');
   }
 
+  void navigateToTeam(BuildContext context, String id) {
+    Routemaster.of(context).push('/t/$id');
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Drawer(
@@ -36,7 +40,9 @@ class TeamListDrawer extends ConsumerWidget {
                         backgroundImage: NetworkImage(team.avatar),
                       ),
                       title: Text(team.name),
-                      onTap: () {},
+                      onTap: () {
+                        navigateToTeam(context, team.id);
+                      },
                     );
                   },
                 ),
